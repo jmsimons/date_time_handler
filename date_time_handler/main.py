@@ -41,7 +41,8 @@ class DateTimeHandler:
     def timestring(self, time_stamp, **kwargs):
         ''' Gets datetime object with time_stamp and returns a formated datetime string '''
         time_obj = self._get_time_obj(time_stamp, **kwargs)
-        return time_obj.strftime(self.time_format)
+        time_str = time_obj.strftime(self.time_format)
+        return time_str
     
     def timestamp(self, time_stamp, **kwargs):
         ''' Gets datetime object with time_stamp and returns seconds since the epoch '''
