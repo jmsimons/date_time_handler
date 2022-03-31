@@ -26,10 +26,10 @@ class DateTimeHandler:
         self.clock_format = clock_format
         self.time_format = f"{date_format} {clock_format}"
 
-    def _get_time_obj(self, time_stamp, start_tz = "UTC"):
+    def _get_time_obj(self, time_stamp, start_tz = None):
         '''
         - Takes time_stamp in seconds, tuple, or string and returns a datetime object
-        - Converts from start_tz (utc by default) to local tz (self.time_zone)
+        - Converts from start_tz (None by default) to self.time_zone
         '''
         if type(time_stamp) == float or type(time_stamp) == int:
             time_obj = datetime.datetime.fromtimestamp(time_stamp)

@@ -14,7 +14,8 @@ class TestDateTimeHandler(unittest.TestCase):
         self.dt_fmt = DateTimeHandler(time_zone = None)
         self.utc_fmt = DateTimeHandler(time_zone = self.tz_utc) # will start at start_tz or utc and convert to utc
         self.pac_fmt = DateTimeHandler(time_zone = self.tz_pac) # will start at start_tz or Pacific and convert to Pacific
-        self.start_time = datetime.datetime(2000, 1, 1, 0, 0, 0, tzinfo = None) # January 1, 2000 00:00:00
+        self.start_tuple = (2000, 1, 1, 0, 0, 0)
+        self.start_time = datetime.datetime(*start_tuple, tzinfo = None) # January 1, 2000 00:00:00
         self.one_day = datetime.datetime(2000, 1, 2, 0, 0, 0, tzinfo = None) # January 8, 2000 00:00:00
         self.one_week = datetime.datetime(2000, 1, 8, 0, 0, 0, tzinfo = None) # January 8, 2000 00:00:00
         self.one_month = datetime.datetime(2000, 2, 1, 0, 0, 0, tzinfo = None) # Febuary 1, 2000 00:00:00
@@ -32,8 +33,10 @@ class TestDateTimeHandler(unittest.TestCase):
 
     def test__get_time_obj(self):
         ''' tests _get_time_obj type detection and timezone conversion '''
+        
+        self.assertEqual()
         # use utc_fmt to convert start_time from local time to utc and check for correct daylight time
-        local_now = time.time()
+        
         # use pac_fmt to convert back to local time and check for correct daylight time
         pass
 
