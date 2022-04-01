@@ -37,12 +37,14 @@ class DateTimeHandler:
             time_obj = datetime.datetime(*time_stamp)
         elif type(time_stamp) == str:
             time_obj = datetime.datetime.strptime(time_stamp, self.time_format)
-        start_time_zone = load_tz(start_tz)
-        if start_time_zone:
-            time_obj = start_time_zone.localize(time_obj)
-            start_time_zone.normalize(time_obj)
         if self.time_zone:
-            time_obj = time_obj.astimezone(self.time_zone)
+            start_time_zone = load_tz(start_tz)
+            if start_time_zone:
+                time_obj = start_time_zone.localize(time_obj)
+                start_time_zone.normalize(time_obj)
+                time_obj = time_obj.astimezone(self.time_zone)
+            else:
+                time_obj = start_time_zone.localize(self.time_zone)
             self.time_zone.normalize(time_obj)
         return time_obj
 

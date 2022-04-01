@@ -11,7 +11,7 @@ class TestDateTimeHandler(unittest.TestCase):
         print("****** Setting up test-class ******")
         self.tz_utc = "UTC"
         self.tz_pac = "US/Pacific"
-        self.dt_fmt = DateTimeHandler(time_zone = None)
+        self.dt_fmt = DateTimeHandler()
         self.utc_fmt = DateTimeHandler(time_zone = self.tz_utc) # will start at start_tz or utc and convert to utc
         self.pac_fmt = DateTimeHandler(time_zone = self.tz_pac) # will start at start_tz or Pacific and convert to Pacific
         self.start_tuple = (2000, 1, 1, 0, 0, 0)
@@ -34,7 +34,7 @@ class TestDateTimeHandler(unittest.TestCase):
     def test__get_time_obj(self):
         ''' tests _get_time_obj type detection and timezone conversion '''
         
-        self.assertEqual()
+        self.assertEqual(self.start_time.time_stamp(), )
         # use utc_fmt to convert start_time from local time to utc and check for correct daylight time
         
         # use pac_fmt to convert back to local time and check for correct daylight time
@@ -42,34 +42,34 @@ class TestDateTimeHandler(unittest.TestCase):
 
     def test_timestring(self):
         ''' tests that timestring returns a string of the correct value and format '''
-        timestring = self.dt_fmt.timestring(self.start_time.timestamp(), start_tz = None)
+        timestring = self.dt_fmt.timestring(self.start_time.timestamp())
         self.assertEqual(timestring, "2000/01/01 00:00:00")
     
     def test_timestamp(self):
         ''' tests that timestamp returns an integer of the correct value '''
-        timestamp = self.dt_fmt.timestamp(self.start_time.timestamp(), start_tz = None)
+        timestamp = self.dt_fmt.timestamp(self.start_time.timestamp())
         self.assertEqual(type(timestamp), int) # change to float if use-case requires more specificity
         self.assertEqual(timestamp, int(self.start_time.timestamp()))
     
     def test_timetuple(self):
         ''' tests that timetuple returns a tuple containing the correct values '''
-        timetuple = self.dt_fmt.timetuple(self.start_time.timestamp(), start_tz = None)
+        timetuple = self.dt_fmt.timetuple(self.start_time.timestamp())
         self.assertEqual(timetuple, self.start_time.timetuple())
     
     def test_datestring(self):
         ''' tests that timestring returns a string of the correct value and format '''
-        datestring = self.dt_fmt.datestring(self.start_time.timestamp(), start_tz = None)
+        datestring = self.dt_fmt.datestring(self.start_time.timestamp())
         self.assertEqual(datestring, "2000/01/01")
     
     def test_datestamp(self):
         ''' tests that datestamp returns an integer of the correct value '''
-        datestamp = self.dt_fmt.datestamp(self.start_time.timestamp(), start_tz = None)
+        datestamp = self.dt_fmt.datestamp(self.start_time.timestamp())
         self.assertEqual(type(datestamp), int) # change to float if use-case requires more specificity
         self.assertEqual(datestamp, int(self.start_time.timestamp()))
     
     def test_datetuple(self):
         ''' tests that timestring returns a string of the correct value and format '''
-        datetuple = self.dt_fmt.datetuple(self.start_time.timestamp(), start_tz = None)
+        datetuple = self.dt_fmt.datetuple(self.start_time.timestamp())
         expected_time = self.start_time
         expected_time.replace(tzinfo = None)
         self.assertEqual(datetuple, expected_time.timetuple())
