@@ -1,6 +1,5 @@
 # date-time-handler
-
-#### Robust date-time formatter with implicit time-zone conversion ####
+### Robust date-time formatter with implicit time-zone conversion ###
 
 
 - Uses Python standard library time and datetime
