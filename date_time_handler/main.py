@@ -33,19 +33,19 @@ class DateTimeHandler:
         '''
         if type(time_stamp) == float or type(time_stamp) == int:
             time_obj = datetime.datetime.fromtimestamp(time_stamp)
-        elif type(time_stamp) == tuple or type(time_stamp) == struct_time:
-            time_obj = datetime.datetime(*time_stamp)
         elif type(time_stamp) == str:
             time_obj = datetime.datetime.strptime(time_stamp, self.time_format)
+        elif type(time_stamp) == tuple or type(time_stamp) == struct_time:
+            time_obj = datetime.datetime(*time_stamp)
+        elif type(time_stamp) == datetime.datetime:
+            time_obj = time_stamp
         if self.time_zone:
             start_time_zone = load_tz(start_tz)
             if start_time_zone:
                 time_obj = start_time_zone.localize(time_obj)
-                start_time_zone.normalize(time_obj)
                 time_obj = time_obj.astimezone(self.time_zone)
             else:
-                time_obj = start_time_zone.localize(self.time_zone)
-            self.time_zone.normalize(time_obj)
+                time_obj = self.time_zone.localize(self.time_zone)
         return time_obj
 
     def timestring(self, time_stamp, **kwargs):
@@ -54,9 +54,11 @@ class DateTimeHandler:
         time_str = time_obj.strftime(self.time_format)
         return time_str
     
-    def timestamp(self, time_stamp, **kwargs):
-        ''' Gets datetime object with time_stamp and returns seconds since the epoch '''
+    def timestamp(self, time_stamp, local = False, **kwargs):
+        ''' Gets datetime object with time_stamp and returns seconds since the epoch in utc '''
         time_obj = self._get_time_obj(time_stamp, **kwargs)
+        # if local:
+        #     return 
         return int(time_obj.timestamp())
     
     def timetuple(self, time_stamp, **kwargs):
