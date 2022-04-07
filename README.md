@@ -1,5 +1,6 @@
 # date-time-handler
-### Robust date-time formatter with implicit time-zone conversion ###
+## Robust date-time formatter with implicit time-zone conversion ##
+### Out of the box solution for quick and easy proto-type building ###
 
 
 - Uses Python standard library time and datetime
@@ -9,18 +10,18 @@
     $ pip3 install python-dateutil
 ```
 - date_time_handler package contains class DateTimeHandler with methods that convert timestamp format and time-zone
-- By default, DateTimeHandler performs timezone-naive timestamp format conversion
+- By default, DateTimeHandler performs timezone-naive timestamp format conversion (handy for quick utc time formatting)
 - For implicit timezone conversion:
     - set destination tz with kwarg ```time_zone = 'region/zone'``` at instantiation
     - then kwarg ```start_tz = 'region/zone'``` when converting timestamp format
-- All methods take timestamp in any format: int/float, tuple/struct, formatted_string
+- All methods take timestamp in any format: int/float, tuple/struct, formatted_string, and even datetime obj
 
 
 ### examples ###
 
 #### for time-zone agnostic format conversion ####
 ```
->>> dt_format = DateTimeHandler()
+>>> dt_format = DateTimeHandler(date_format = "%Y/%m/%d", clock_format = "%H:%M:%S")
 >>> timestring = dt_format.timestring(timestamp)
 >>> timetuple = dt_format.timetuple(timestamp)
 >>> datestamp = dt_format.datestamp(timestamp)
