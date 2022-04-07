@@ -16,14 +16,14 @@ class TestDateTimeHandler(unittest.TestCase):
         self.utc_fmt = DateTimeHandler(time_zone = self.tz_utc) # will start at start_tz and convert to utc
         self.pac_fmt = DateTimeHandler(time_zone = self.tz_pac) # will start at start_tz or Pacific and convert to Pacific
         
-        self.start_tuple = (2000, 1, 1, 0, 0, 0)
+        self.start_tuple = (2000, 1, 1, 0, 0, 0, 0)
         self.start_time = datetime.datetime(*self.start_tuple, tzinfo = None) # January 1, 2000 00:00:00
-        self.one_day = datetime.datetime(2000, 1, 2, 0, 0, 0, tzinfo = None) # January 8, 2000 00:00:00
-        self.one_week = datetime.datetime(2000, 1, 8, 0, 0, 0, tzinfo = None) # January 8, 2000 00:00:00
-        self.one_month = datetime.datetime(2000, 2, 1, 0, 0, 0, tzinfo = None) # Febuary 1, 2000 00:00:00
-        self.three_months = datetime.datetime(2000, 4, 1, 0, 0, 0, tzinfo = None) # Febuary 1, 2000 00:00:00
-        self.six_months = datetime.datetime(2000, 7, 1, 0, 0, 0, tzinfo = None) # July 1, 2000 00:00:00
-        self.one_year = datetime.datetime(2001, 1, 1, 0, 0, 0, tzinfo = None) # January 1, 2001 00:00:00
+        self.one_day = datetime.datetime(2000, 1, 2, 0, 0, 0, 0, tzinfo = None) # January 8, 2000 00:00:00
+        self.one_week = datetime.datetime(2000, 1, 8, 0, 0, 0, 0, tzinfo = None) # January 8, 2000 00:00:00
+        self.one_month = datetime.datetime(2000, 2, 1, 0, 0, 0, 0, tzinfo = None) # Febuary 1, 2000 00:00:00
+        self.three_months = datetime.datetime(2000, 4, 1, 0, 0, 0, 0, tzinfo = None) # Febuary 1, 2000 00:00:00
+        self.six_months = datetime.datetime(2000, 7, 1, 0, 0, 0, 0, tzinfo = None) # July 1, 2000 00:00:00
+        self.one_year = datetime.datetime(2001, 1, 1, 0, 0, 0, 0, tzinfo = None) # January 1, 2001 00:00:00
 
     def test_load_tz(self):
         self.assertEqual(load_tz(self.tz_pac), timezone(self.tz_pac))
@@ -31,21 +31,25 @@ class TestDateTimeHandler(unittest.TestCase):
 
     def test__get_time_obj(self):
         ''' tests _get_time_obj type detection and timezone conversion '''
-        # TODO: resolve dl_offset_hours through pytz.timezone/datetime with self.start_time
-        dl_offset_hours = 7
 
+        # use dt_fmt to create time object from each accepted type and assert equal to self.start_time
+        self.assertEqual(self.dt_fmt._get_time_obj(int(self.start_time.timestamp())), self.start_time)
+        self.assertEqual(self.dt_fmt._get_time_obj(float(self.start_time.timestamp())), self.start_time)
+        self.assertEqual(self.dt_fmt._get_time_obj(self.start_time.strftime(self.dt_fmt.time_format)), self.start_time)
+        self.assertEqual(self.dt_fmt._get_time_obj(self.start_tuple), self.start_time)
+        self.assertEqual(self.dt_fmt._get_time_obj(self.start_time.timetuple()[:6]), self.start_time)
+        self.assertEqual(self.dt_fmt._get_time_obj(self.start_time), self.start_time)
+
+        dl_offset_hours = 8 # set for test-datetime
         # use utc_fmt to convert start_time from local time to utc and check for correct daylight time
-        utc_time_obj = self.utc_fmt._get_time_obj(self.start_tuple, start_tz = self.tz_pac)
         pac_time_obj = timezone(self.tz_pac).localize(self.start_time)
-        utc_seconds = int(utc_time_obj.strftime("%s"))
-        pac_seconds = int(pac_time_obj.strftime("%s"))
-        print("UTC:", utc_seconds, utc_time_obj.timestamp(), utc_time_obj)
-        print("PAC:", pac_seconds, pac_time_obj.timestamp(), pac_time_obj)
-        self.assertEqual(utc_time_obj.timestamp(), pac_time_obj.timestamp() + (60 * 60 * dl_offset_hours))
-        
+        utc_time_obj = self.utc_fmt._get_time_obj(self.start_tuple, start_tz = self.tz_pac)
+        naive_delta = utc_time_obj.replace(tzinfo = None) - pac_time_obj.replace(tzinfo = None)
+        self.assertEqual(naive_delta.total_seconds(), (60 * 60 * dl_offset_hours))
         # use pac_fmt to convert back to local time and check for correct daylight time
-        local_time_obj = self.pac_fmt._get_time_obj(utc_time_obj.timestamp(), start_tz = self.tz_utc)
-        self.assertEqual(int(local_time_obj.timestamp()), int(self.start_time.timestamp()))
+        new_pac_time_obj = self.pac_fmt._get_time_obj(utc_time_obj.timetuple()[:6], start_tz = self.tz_utc)
+        naive_delta = utc_time_obj.replace(tzinfo = None) - new_pac_time_obj.replace(tzinfo = None)
+        self.assertEqual(naive_delta.total_seconds(), (60 * 60 * dl_offset_hours))
 
     def test_timestring(self):
         ''' tests that timestring returns a string of the correct value and format '''

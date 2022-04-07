@@ -38,7 +38,7 @@ class DateTimeHandler:
         elif type(time_stamp) == tuple or type(time_stamp) == struct_time:
             time_obj = datetime.datetime(*time_stamp)
         elif type(time_stamp) == datetime.datetime:
-            time_obj = time_stamp
+            time_obj = time_stamp.replace(tzinfo = None)
         if self.time_zone:
             start_time_zone = load_tz(start_tz)
             if start_time_zone:
@@ -54,11 +54,9 @@ class DateTimeHandler:
         time_str = time_obj.strftime(self.time_format)
         return time_str
     
-    def timestamp(self, time_stamp, local = False, **kwargs):
+    def timestamp(self, time_stamp, **kwargs):
         ''' Gets datetime object with time_stamp and returns seconds since the epoch in utc '''
         time_obj = self._get_time_obj(time_stamp, **kwargs)
-        # if local:
-        #     return 
         return int(time_obj.timestamp())
     
     def timetuple(self, time_stamp, **kwargs):
